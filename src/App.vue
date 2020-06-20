@@ -1,7 +1,7 @@
 <template>
   <div>
-    <p>Result: {{result}}</p>
     <p><button @click="listenChannel">Listen channel!</button></p>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -21,7 +21,7 @@
 
         window.Echo.channel('chat.user.1')
           .listen('.messagepushed', function (e) {
-            console.log(e);
+            console.log('Message pushed: ' + e);
           });
       }
     },

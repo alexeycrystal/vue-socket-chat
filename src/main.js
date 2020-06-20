@@ -2,31 +2,25 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import {store} from './store'
-import {router} from "./router";
+import {router} from './router'
 
-import development from "./config/development.json";
-import production from "./config/production.json";
+import axios from 'axios'
 
-import Echo from "laravel-echo"
-import SocketIO from "socket.io-client"
+import echo from './util/echo'
 
-window.io = SocketIO;
+import development from './config/development.json'
+import production from './config/production.json'
 
-if (typeof io !== 'undefined') {
-  window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: window.location.hostname + ':6001',
-    transports: ['websocket', 'polling'],
-  });
-} else {
-  console.log('Not connected to socket.io');
-}
+import veevalidate from './util/veevalidate'
 
-if (process.env.NODE_ENV === "production") {
-  Vue.prototype.$config = Object.freeze(production);
-} else {
-  Vue.prototype.$config = Object.freeze(development);
-}
+let config = process.env.NODE_ENV === 'production'
+  ? production
+  : development;
+Vue.prototype.$config = Object.freeze(config);
+
+Vue.prototype.$echo = echo;
+
+axios.defaults.baseURL = config.apiUrl;
 
 new Vue({
   el: '#app',

@@ -10,7 +10,13 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
-    "vue": "^2.5.11"
+    "axios": "^0.19.2",
+    "laravel-echo": "^1.8.0",
+    "socket.io-client": "^2.3.0",
+    "vue": "^2.5.11",
+    "vue-router": "^3.3.4",
+    "vue-socket.io": "^3.0.9",
+    "vuex": "^3.4.0"
   },
   "browserslist": [
     "> 1%",

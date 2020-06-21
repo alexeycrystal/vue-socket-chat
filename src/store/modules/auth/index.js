@@ -41,6 +41,32 @@ const actions = {
 
     return result;
   },
+  register: async (context, payload) => {
+    let params = {
+      email: payload.email,
+      password: payload.password,
+      password_confirmation: payload.password_confirmation,
+      name: payload.name,
+      lang: payload.lang,
+    };
+
+    console.log(params);
+
+    let result = await axios.post('/auth/registration', params)
+      .then(response => {
+
+        let data = response.data.data;
+
+        if (data && data.token) {
+          context.commit('setToken', data.token);
+          return {data};
+        }
+      }).catch(error => {
+        return Promise.reject(error);
+      });
+
+    return result;
+  },
   setToken: (context, payload) => {
     context.commit('setToken', payload);
   }

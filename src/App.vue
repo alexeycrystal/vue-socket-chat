@@ -32,5 +32,6 @@
 </script>
 
 <style>
-
+  @import '~reset-css/sass/_reset.scss';
+  @import "~font-awesome/css/font-awesome.min.css";
 </style>

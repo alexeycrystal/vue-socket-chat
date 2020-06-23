@@ -3,18 +3,25 @@ import axios from 'axios';
 const state = {
   auth: {
     token: null,
+    logged_user_id: null,
   }
 };
 
 const getters = {
   getToken(state) {
     return state.auth.token;
+  },
+  getLoggedUserId(state) {
+    return state.auth.logged_user_id;
   }
 };
 
 const mutations = {
   setToken: (state, payload) => {
     state.auth.token = payload;
+  },
+  setLoggedUserId: (state, payload) => {
+    state.auth.logged_user_id = payload;
   },
 };
 
@@ -32,7 +39,10 @@ const actions = {
         let data = response.data.data;
 
         if (data && data.token) {
+
           context.commit('setToken', data.token);
+          context.commit('setLoggedUserId', data.user_id);
+
           return {data};
         }
       }).catch(error => {
@@ -50,8 +60,6 @@ const actions = {
       lang: payload.lang,
     };
 
-    console.log(params);
-
     let result = await axios.post('/auth/registration', params)
       .then(response => {
 
@@ -59,6 +67,7 @@ const actions = {
 
         if (data && data.token) {
           context.commit('setToken', data.token);
+          context.commit('setLoggedUserId', data.user_id);
           return {data};
         }
       }).catch(error => {

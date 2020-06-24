@@ -1,10 +1,11 @@
 <template>
   <div class="messages">
-    <ul>
+    <ul class="reverseorder">
       <li v-for="message in getMessages"
           :class="currentUserId === message.user_id
           ? 'sent'
-          : 'replies'">
+          : 'replies'"
+          :key="message.id">
         <img :src="message.avatar" alt=""/>
         <p>{{message.text}}</p>
       </li>
@@ -49,7 +50,6 @@
 
           if(!this.getMessagesByChats['chat' + activeChatId]) {
 
-
             this.$store
               .dispatch('chat/loadChatMessages', {
                 chat_id: activeChatId,
@@ -65,6 +65,8 @@
 
 <style scoped>
   #frame .content .messages {
+    display: flex;
+    flex-direction: column-reverse;
     height: auto;
     min-height: calc(100% - 93px);
     max-height: calc(100% - 93px);
@@ -137,5 +139,10 @@
     #frame .content .messages ul li p {
       max-width: 300px;
     }
+  }
+
+  .reverseorder {
+    display: flex;
+    flex-direction: column-reverse;
   }
 </style>

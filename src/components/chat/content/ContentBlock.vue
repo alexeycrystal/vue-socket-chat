@@ -1,12 +1,20 @@
 <template>
   <div class="content">
-    <ChatHeaderBlock></ChatHeaderBlock>
-    <MessagesBlock></MessagesBlock>
-    <MessageInputBlock></MessageInputBlock>
+    <template v-if="getActiveChatId">
+      <ChatHeaderBlock></ChatHeaderBlock>
+      <MessagesBlock></MessagesBlock>
+      <MessageInputBlock></MessageInputBlock>
+    </template>
+    <template v-else>
+      Please, select a chat.
+    </template>
+
   </div>
 </template>
 
 <script>
+
+  import {mapGetters} from 'vuex';
 
   import ChatHeaderBlock from "./components/ChatHeader";
   import MessagesBlock from "./components/MessagesView";
@@ -18,6 +26,9 @@
       ChatHeaderBlock,
       MessagesBlock,
       MessageInputBlock,
+    },
+    computed: {
+      ...mapGetters('chat', ['getActiveChatId']),
     }
   }
 </script>

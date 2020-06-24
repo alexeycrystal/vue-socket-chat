@@ -9,8 +9,31 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+
     export default {
-        name: "MessageInputBlock"
+      name: "MessageInputBlock",
+      computed: {
+        ...mapGetters('chat', [
+          'getActiveChatId',
+        ])
+      },
+      data() {
+        return {
+          text: '',
+        }
+      },
+      methods: {
+          sendMessage() {
+
+            let payload = {
+              chat_id: this.getActiveChatId,
+              text: this.text
+            };
+
+            
+          }
+      }
     }
 </script>
 

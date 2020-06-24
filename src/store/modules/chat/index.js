@@ -1,9 +1,10 @@
+import Vue from 'vue';
 import axios from 'axios';
 
 const state = {
   activeChatId: null,
   chats: [],
-  messages: [],
+  messages: {},
   lastLoadedMessagesByChatId: false,
 };
 
@@ -41,6 +42,13 @@ const mutations = {
   },
   setLastLoadedMessagesByChatId: (state, payload) => {
     state.lastLoadedMessagesByChatId = payload;
+  },
+  createMessages: (state, payload) => {
+
+    let chatId = payload.chat_id;
+    let messages = payload.messages;
+
+    Vue.set(state.messages, 'chat' + chatId, messages);
   },
   appendMessages: (state, payload) => {
 
@@ -109,7 +117,7 @@ const actions = {
           messages: messages,
         };
 
-        context.commit('appendMessages', params);
+        context.commit('createMessages', params);
         context.commit('setLastLoadedMessagesByChatId', payload.chat_id);
 
         return messages;

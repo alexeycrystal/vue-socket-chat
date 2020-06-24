@@ -1,7 +1,7 @@
 <template>
   <div class="messages">
     <ul>
-      <li v-for="message in messages"
+      <li v-for="message in getMessages"
           :class="currentUserId === message.user_id
           ? 'sent'
           : 'replies'">
@@ -22,12 +22,13 @@
       ...mapGetters('chat', {
         getActiveChatId: 'getActiveChatId',
         getMessagesByChats: 'getMessagesByChats',
-        getLastLoadedChatId: 'getLastLoadedChatId',
       }),
+      getMessages() {
+        return this.getMessagesByChats['chat' + this.getActiveChatId];
+      }
     },
     created() {
       this.refreshMessagesByActiveChat();
-
     },
     data() {
       return {
@@ -36,17 +37,7 @@
     },
     watch: {
       getActiveChatId(newValue, oldValue) {
-
-        console.log('Watcher fired');
-
         this.refreshMessagesByActiveChat();
-      },
-      getLastLoadedChatId(loadedChatId, oldValue) {
-        console.log('getLastLoadedChatId FIRED!')
-
-        if(loadedChatId)
-          this.messages = this.getMessagesByChats[loadedChatId];
-
       },
     },
     methods: {
@@ -56,7 +47,7 @@
 
         if(activeChatId) {
 
-          if(!this.getMessagesByChats[activeChatId]) {
+          if(!this.getMessagesByChats['chat' + activeChatId]) {
 
 
             this.$store
@@ -65,8 +56,6 @@
                 per_page: 20,
                 page: 1,
               });
-          } else {
-            this.messages = this.getMessagesByChats[activeChatId];
           }
         }
       }

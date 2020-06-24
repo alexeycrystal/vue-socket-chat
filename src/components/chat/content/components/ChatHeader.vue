@@ -1,7 +1,7 @@
 <template>
   <div class="chat-profile">
-    <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt=""/>
-    <p>Harvey Specter</p>
+    <img :src="chat.avatar" alt=""/>
+    <p>{{chat.title}}</p>
     <div class="social-media">
       <i class="fa fa-facebook" aria-hidden="true"></i>
       <i class="fa fa-twitter" aria-hidden="true"></i>
@@ -11,8 +11,15 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+
   export default {
     name: "ChatHeaderBlock",
+    computed: {
+      ...mapGetters('chat', {
+        chat: 'getActiveChatInfo'
+      })
+    }
   }
 </script>
 

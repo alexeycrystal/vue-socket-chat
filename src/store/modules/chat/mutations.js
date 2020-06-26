@@ -42,6 +42,14 @@ const mutations = {
 
     if(state.messages['chat' + payload.chat_id])
       state.messages['chat' + payload.chat_id].unshift(payload.message);
+  },
+  saveUsers: (state, payload) => {
+    state.users = payload;
+  },
+  updateChatUserStatus: (state, payload) => {
+
+    if(state.users['user' + payload.user_id])
+      state.users['user' + payload.user_id].status = payload.status;
   }
 };
 

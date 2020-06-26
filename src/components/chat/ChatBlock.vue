@@ -20,11 +20,40 @@
     created() {
       this.listenToOwnPresenceChannel();
     },
+    beforeDestroy() {
+      this.leaveOwnChannel();
+    },
     computed: {
       ...mapGetters('auth', [
         "getLoggedUserId",
         "getToken"
       ]),
+      ...mapGetters('chat', [
+        "getChats"
+      ]),
+      ...mapGetters('websocket', [
+        "getUsersInChannel"
+      ])
+    },
+    watch: {
+      getChats() {
+
+        let chats = this.$store.getters["chat/getChats"];
+
+        console.log(typeof chats);
+
+        let chatIds = [];
+
+        chats.forEach(function(chat, index) {
+          chatIds.push(chat.chat_id)
+        })
+
+        let params = {
+          chats_ids: chatIds,
+        };
+
+        this.$store.dispatch('websocket/saveUsersAsWSListeners', params);
+      }
     },
     methods: {
       listenToOwnPresenceChannel() {
@@ -34,7 +63,14 @@
         let vm = this;
 
         this.$echo
-          .channel('presence-chat.user.' + this.getLoggedUserId)
+          .join('chat.user.' + this.getLoggedUserId)
+          .here((users) => {
+
+            vm.$store.dispatch("websocket/setUsersInChannel", users);
+
+            if(users.length > 0)
+              vm.$store.dispatch("websocket/setUserStatus", 'online');
+          })
           .listen('.ChatMessageSent', function (e) {
             console.log(e);
 
@@ -47,7 +83,36 @@
                 chat_id: message.chat_id,
               })
             }
+          })
+          .listen('.UserStatusChangedEvent', function (e) {
+            console.log('UserStatusChangedEvent!!!!!!!!!!!! FIREEEED!');
+
+            if(e.data && e.data.user_id) {
+
+              let params = {
+                user_id: e.data.user_id,
+                status: e.data.status,
+              };
+
+              vm.$store.dispatch("chat/updateChatUserStatus", params)
+            }
+          })
+          .joining((user) => {
+
+            console.log('joining channel - user');
+          })
+          .leaving((user) => {
+
+            if(this.getUsersInChannel.length === 0)
+              vm.$store.dispatch("websocket/setUserStatus", 'offline');
           });
+      },
+      leaveOwnChannel() {
+
+        this.$echo.leave('chat.user.' + this.getLoggedUserId);
+
+        if(this.getUsersInChannel.length > 0)
+          this.$store.dispatch("websocket/setUserStatus", 'offline');
       }
     }
   }

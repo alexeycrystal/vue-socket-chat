@@ -12,15 +12,29 @@ const actions = {
       .then(response => {
 
         let chats = response.data.data;
-        let result = {};
 
-        chats.forEach(chat => {
-          result[chat.chat_id] = chat;
-        });
+        if(chats) {
 
-        context.commit('setChats', result);
+          let users = {};
 
-        return result;
+          chats.forEach(function(element, $index) {
+
+            if(element.user_id) {
+
+              let prefix = 'user' + element.user_id;
+              users[prefix] = {};
+              users[prefix].status = element.status;
+            }
+          })
+
+          context.commit('setChats', chats);
+          context.commit('saveUsers', users);
+
+          return chats;
+        }
+
+        return null;
+
       }).catch(error => {
         return Promise.reject(error);
       });
@@ -84,6 +98,15 @@ const actions = {
       chat_id: payload.chat_id,
       message: payload.message
     });
+  },
+  updateChatUserStatus: async (context, payload) => {
+
+    let params = {
+      user_id: payload.user_id,
+      status: payload.status,
+    };
+
+    context.commit('updateChatUserStatus', params);
   }
 };
 

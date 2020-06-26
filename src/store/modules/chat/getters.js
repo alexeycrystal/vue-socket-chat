@@ -13,6 +13,9 @@ const getters = {
     },
     getLastLoadedChatId(state) {
         return state.lastLoadedMessagesByChatId;
+    },
+    getUsers(state) {
+      return state.users;
     }
 };
 

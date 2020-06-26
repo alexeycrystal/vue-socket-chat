@@ -3,9 +3,13 @@
     <ul>
       <li v-for="chat in chats"
           :class="['chat', {active: activeChatId === chat.chat_id}]"
+          :key="chat.chat_id"
           @click="activateChat(chat.chat_id)">
         <div class="wrap">
-          <span class="chat-status online"></span>
+          <span :class="[
+            'chat-status',
+            chat.user_id ? users['user' + chat.user_id].status : ''
+          ]"></span>
           <img :src="chat.avatar" alt=""/>
           <div class="meta">
             <p class="name">{{chat.title}}</p>
@@ -24,6 +28,7 @@
     name: "ChatView",
     computed: {
       ...mapGetters('chat', {
+        users: 'getUsers',
         chats: 'getChats',
         activeChatId: 'getActiveChatId',
       }),

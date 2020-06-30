@@ -55,21 +55,57 @@ const actions = {
       page: payload.page,
     };
 
+    context.commit("setMessagesLoadingStatus", true);
+
     let result = await axios.get('/user/messages', {params: queryParams})
       .then(response => {
 
-        let messages = response.data.data.messages;
+        let data = response.data.data;
+        let messages = data.messages;
 
         let params = {
           chat_id: payload.chat_id,
           messages: messages,
         };
 
-        context.commit('createMessages', params);
+        if(payload.page === 1)
+          context.commit('createMessages', params);
+        else
+          context.commit('appendMessages', params);
+
+        let links = response.data.links;
+
+        console.log(links);
+
+        let page = payload.page;
+        let previous_page = null;
+        if(links.previous_page) {
+          const urlParams = new URLSearchParams(links.previous_page);
+          previous_page = urlParams.get('page');
+        }
+
+        let next_page = null;
+        if(links.next_page) {
+          const urlParams = new URLSearchParams(links.next_page);
+          next_page = urlParams.get('page');
+        }
+
+        let total_pages = links.total_pages;
+
+        let paginationParams = {
+          previous_page,
+          page,
+          next_page,
+          total_pages
+        };
+
+        context.commit('updatePaginationResult', paginationParams);
 
         return messages;
       }).catch(error => {
         return Promise.reject(error);
+      }).finally(() => {
+        context.commit("setMessagesLoadingStatus", false);
       });
 
     return result;

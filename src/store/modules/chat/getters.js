@@ -17,6 +17,12 @@ const getters = {
     getUsers(state) {
       return state.users;
     },
+    getNextPageNumber(state) {
+      return state.messagesPagination.next_page;
+    },
+    isMessagesLoadingNow(state) {
+      return state.isMessagesLoadingNow;
+    }
 };
 
 export default getters;

@@ -1,5 +1,5 @@
 <template>
-  <div class="messages">
+  <div class="messages" @scroll="processMessageScroll" ref="messagesBlock">
     <ul class="reverseorder">
       <li v-for="message in getMessages"
           :class="currentUserId === message.user_id
@@ -23,6 +23,8 @@
       ...mapGetters('chat', {
         getActiveChatId: 'getActiveChatId',
         getMessagesByChats: 'getMessagesByChats',
+        nextPage: 'getNextPageNumber',
+        isMessagesLoadingNow: 'isMessagesLoadingNow',
       }),
       getMessages() {
         return this.getMessagesByChats['chat' + this.getActiveChatId];
@@ -42,13 +44,36 @@
       },
     },
     methods: {
+      processMessageScroll(event) {
+
+        let ref = event.target;
+
+        let maximumHeightForCurrentContent = ref.scrollHeight - ref.clientHeight;
+
+        let scrollPercentage = 0;
+        if(maximumHeightForCurrentContent !== 0)
+          scrollPercentage = 100 - Math.round((ref.scrollTop * 100) / maximumHeightForCurrentContent);
+
+        if(scrollPercentage > 60
+          && this.nextPage
+          && !this.isMessagesLoadingNow) {
+
+          let activeChatId = this.getActiveChatId;
+
+          this.$store.dispatch('chat/loadChatMessages', {
+            chat_id: activeChatId,
+            per_page: 20,
+            page: this.nextPage,
+          })
+        }
+      },
       refreshMessagesByActiveChat() {
 
         let activeChatId = this.getActiveChatId;
 
-        if(activeChatId) {
+        if (activeChatId) {
 
-          if(!this.getMessagesByChats['chat' + activeChatId]) {
+          if (!this.getMessagesByChats['chat' + activeChatId]) {
 
             this.$store
               .dispatch('chat/loadChatMessages', {
@@ -141,7 +166,7 @@
     }
   }
 
-  .reverseorder {
+  #frame .content .messages .reverseorder {
     display: flex;
     flex-direction: column-reverse;
   }

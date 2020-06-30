@@ -2,7 +2,6 @@
   <div id="frame">
     <SidePanelBlock></SidePanelBlock>
     <ContentBlock></ContentBlock>
-    <button @click="releaseListenersAfterClose">BUTTON TEST</button>
   </div>
 </template>
 
@@ -61,10 +60,6 @@
     },
     methods: {
       releaseListenersAfterClose: function (event) {
-        event.preventDefault()
-
-        console.log('WINDOWS CLOSE EVENT FIRED!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-
         let token = this.getToken;
 
         this.$store.dispatch("websocket/deleteUserListeners", {

@@ -34,6 +34,32 @@ const actions = {
         return Promise.reject(error);
       });
   },
+  deleteUserListeners: async (context, payload) => {
+
+    let data = new FormData;
+
+    data.append('append_headers', JSON.stringify({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + payload.token
+    }));
+
+    navigator.sendBeacon(axios.defaults.baseURL + '/user/ws/dependencies/destroy', data);
+  },
+  setOfflineStatusByBeacon: async (context, payload) => {
+
+    let data = new FormData;
+
+    data.append('append_headers', JSON.stringify({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + payload.token
+    }));
+
+    data.append('status', payload.status);
+
+    navigator.sendBeacon(axios.defaults.baseURL + '/profile/status/change', data);
+  },
   setUserStatus: async (context, status) => {
 
     let params = {

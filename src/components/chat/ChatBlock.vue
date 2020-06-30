@@ -2,6 +2,7 @@
   <div id="frame">
     <SidePanelBlock></SidePanelBlock>
     <ContentBlock></ContentBlock>
+    <button @click="releaseListenersAfterClose">BUTTON TEST</button>
   </div>
 </template>
 
@@ -19,6 +20,8 @@
     },
     created() {
       this.listenToOwnPresenceChannel();
+
+      window.addEventListener('beforeunload', this.releaseListenersAfterClose)
     },
     beforeDestroy() {
       this.leaveOwnChannel();
@@ -40,8 +43,6 @@
 
         let chats = this.$store.getters["chat/getChats"];
 
-        console.log(typeof chats);
-
         let chatIds = [];
 
         chats.forEach(function(chat, index) {
@@ -56,6 +57,21 @@
       }
     },
     methods: {
+      releaseListenersAfterClose: function (event) {
+        event.preventDefault()
+
+        console.log('WINDOWS CLOSE EVENT FIRED!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+        let token = this.getToken;
+
+        this.$store.dispatch("websocket/deleteUserListeners", {
+          token
+        });
+        this.$store.dispatch("websocket/setOfflineStatusByBeacon", {
+          token,
+          status: 'offline'
+        });
+      },
       listenToOwnPresenceChannel() {
 
         this.$echo.connector.options.auth.headers['Authorization'] = 'Bearer ' + this.getToken;
@@ -103,16 +119,23 @@
           })
           .leaving((user) => {
 
-            if(this.getUsersInChannel.length === 0)
+            if(this.getUsersInChannel.length === 0) {
+
               vm.$store.dispatch("websocket/setUserStatus", 'offline');
+
+              vm.$store.dispatch("websocket/deleteUserListeners", params);
+
+            }
           });
       },
       leaveOwnChannel() {
 
         this.$echo.leave('chat.user.' + this.getLoggedUserId);
 
-        if(this.getUsersInChannel.length > 0)
+        if(this.getUsersInChannel.length > 0) {
+
           this.$store.dispatch("websocket/setUserStatus", 'offline');
+        }
       }
     }
   }

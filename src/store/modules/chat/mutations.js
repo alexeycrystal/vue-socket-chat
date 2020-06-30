@@ -50,6 +50,9 @@ const mutations = {
 
     if(state.users['user' + payload.user_id])
       state.users['user' + payload.user_id].status = payload.status;
+  },
+  updateLastMessageByChat: (state, payload) => {
+    Vue.set(state.chats['chat' + payload.chat_id], 'last_message', payload.last_message)
   }
 };
 

@@ -9,14 +9,14 @@ const getters = {
         return state.messages;
     },
     getActiveChatInfo(state) {
-        return state.chats[state.activeChatId];
+        return state.chats['chat' + state.activeChatId];
     },
     getLastLoadedChatId(state) {
         return state.lastLoadedMessagesByChatId;
     },
     getUsers(state) {
       return state.users;
-    }
+    },
 };
 
 export default getters;

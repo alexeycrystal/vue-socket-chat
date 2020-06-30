@@ -1,4 +1,5 @@
 <template>
+
   <div class="chat-profile">
     <img :src="chat.avatar" alt=""/>
     <p>{{chat.title}}</p>
@@ -18,7 +19,12 @@
     computed: {
       ...mapGetters('chat', {
         chat: 'getActiveChatInfo'
-      })
+      }),
+      getChat() {
+        console.log(this.chat);
+
+        return this.chat;
+      }
     }
   }
 </script>

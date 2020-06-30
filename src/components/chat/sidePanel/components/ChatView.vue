@@ -13,7 +13,7 @@
           <img :src="chat.avatar" alt=""/>
           <div class="meta">
             <p class="name">{{chat.title}}</p>
-            <p class="preview">You just got LITT up, Mike.</p>
+            <p class="preview">{{chat.last_message}}</p>
           </div>
         </div>
       </li>
@@ -30,7 +30,7 @@
       ...mapGetters('chat', {
         users: 'getUsers',
         chats: 'getChats',
-        activeChatId: 'getActiveChatId',
+        activeChatId: 'getActiveChatId'
       }),
     },
     created() {

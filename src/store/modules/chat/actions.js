@@ -16,8 +16,11 @@ const actions = {
         if(chats) {
 
           let users = {};
+          let chatsResult = {};
 
           chats.forEach(function(element, $index) {
+
+            chatsResult['chat' + element.chat_id] = element;
 
             if(element.user_id) {
 
@@ -27,7 +30,7 @@ const actions = {
             }
           })
 
-          context.commit('setChats', chats);
+          context.commit('setChats', chatsResult);
           context.commit('saveUsers', users);
 
           return chats;
@@ -83,14 +86,27 @@ const actions = {
 
         let result = response.data.data.result;
 
-        if(result && response.data.data.message)
+        if(result && response.data.data.message) {
+
           context.commit('addNewMessage', {
             chat_id: payload.chat_id,
             message: response.data.data.message
           });
 
+          context.commit('updateLastMessageByChat', {
+            chat_id: payload.chat_id,
+            last_message: response.data.data.message.text
+          });
+        }
       }).catch(error => {
         return Promise.reject(error);
+    });
+  },
+  updateLastMessageByChat: async (context, payload) => {
+
+    context.commit('updateLastMessageByChat', {
+      chat_id: payload.chat_id,
+      last_message: payload.message
     });
   },
   storeMessage: async (context, payload) => {

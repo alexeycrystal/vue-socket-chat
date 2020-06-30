@@ -45,9 +45,12 @@
 
         let chatIds = [];
 
-        chats.forEach(function(chat, index) {
-          chatIds.push(chat.chat_id)
-        })
+        console.log(chats);
+
+        for (var chat in chats)
+          chatIds.push(chats[chat].chat_id)
+
+        console.log(chatIds);
 
         let params = {
           chats_ids: chatIds,
@@ -98,6 +101,11 @@
                 message: message,
                 chat_id: message.chat_id,
               })
+
+              vm.$store.dispatch("chat/updateLastMessageByChat", {
+                message: message.text,
+                chat_id: message.chat_id,
+              });
             }
           })
           .listen('.UserStatusChangedEvent', function (e) {

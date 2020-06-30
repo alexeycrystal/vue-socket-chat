@@ -5,7 +5,7 @@ import actions from "./actions";
 const state = {
   users: {},
   activeChatId: null,
-  chats: [],
+  chats: {},
   messages: {},
   lastLoadedMessagesByChatId: false,
 };

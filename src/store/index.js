@@ -7,6 +7,7 @@ import auth from './modules/auth';
 import chat from './modules/chat';
 import user from './modules/user';
 import websocket from './modules/websocket';
+import search from "./modules/search";
 
 Vue.use(Vuex);
 
@@ -20,5 +21,6 @@ export const store = new Vuex.Store({
     chat,
     user,
     websocket,
+    search,
   }
 });

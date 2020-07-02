@@ -1,75 +1,50 @@
 <template>
   <div id="chats">
-      <ul v-if="!search_filter">
-        <li v-for="chat in chats"
-            :class="['chat', {active: activeChatId === chat.chat_id}]"
-            :key="chat.chat_id"
-            @click="activateChat(chat.chat_id)">
-          <div class="wrap">
-          <span :class="[
-            'chat-status',
-            chat.user_id ? users['user' + chat.user_id].status : ''
-          ]"></span>
-            <img :src="chat.avatar" alt=""/>
-            <div class="meta">
-              <p class="name">{{chat.title}}</p>
-              <p class="preview">{{chat.last_message}}</p>
-            </div>
+    <ul v-if="search_filter">
+      <li v-for="chat in chats"
+          :class="['chat', {active: activeChatId === chat.chat_id}]"
+          :key="chat.chat_id"
+          @click="activateChat(chat.chat_id, chat.message_id)">
+        <div class="wrap">
+          <span class="chat-status"></span>
+          <img :src="chat.avatar" alt=""/>
+          <div class="meta">
+            <p class="name">{{chat.title}}</p>
+            <p class="preview">{{chat.last_message}}</p>
           </div>
-        </li>
-      </ul>
-    <ChatSearchResult></ChatSearchResult>
+        </div>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
   import {mapGetters} from 'vuex';
-  import ChatSearchResult from "./search/ChatSearchResult";
 
   export default {
-    name: "ChatView",
-    components: {
-      ChatSearchResult
-    },
+    name: "ChatSearchResult",
     computed: {
-      ...mapGetters('chat', {
-        users: 'getUsers',
-        chats: 'getChats',
-        activeChatId: 'getActiveChatId'
-      }),
       ...mapGetters('search', {
-        search_filter: "getSearchFilter"
+        search_filter: "getSearchFilter",
+        chats: "getChatsBySearch",
+      }),
+      ...mapGetters('chat', {
+        activeChatId: "getActiveChatId",
       })
     },
-    created() {
-      this.loadChats();
-    },
     methods: {
-      loadChats(perPage, page) {
+      activateChat(chatId, messageId) {
 
-        perPage = perPage ? perPage : 10;
-        page = page ? page : 1;
+        if (chatId && this.activeChatId !== chatId) {
 
-        let params = {
-          per_page: perPage,
-          page: page,
-        };
+          this.$store
+            .dispatch("search/setMessageIdFoundByActiveChat", messageId);
 
-        this.$store
-          .dispatch('chat/loadChats', params);
-      },
-      activateChat(chatId) {
-
-        this.$store
-          .dispatch("chat/resetPaginationState");
-
-        this.$store
-          .dispatch("search/setMessageIdFoundByActiveChat", null);
-
-        if (chatId && this.activeChatId !== chatId)
           this.$store
             .dispatch('chat/updateActiveChat', chatId);
-      }
+        }
+
+      },
     }
   }
 </script>

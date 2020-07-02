@@ -1,13 +1,13 @@
 <template>
   <div class="messages" @scroll="processMessageScroll" ref="messagesBlock">
     <ul class="reverseorder">
-      <li v-for="message in getMessages"
+      <li v-for="(message, index) in getMessages"
           :class="currentUserId === message.user_id
           ? 'sent'
           : 'replies'"
           :key="message.id">
         <img :src="message.avatar" alt=""/>
-        <p>{{message.text}}</p>
+        <p>(ID: {{message.id}})  (IND: {{index}}) {{message.text}}</p>
       </li>
     </ul>
   </div>
@@ -23,8 +23,36 @@
       ...mapGetters('chat', {
         getActiveChatId: 'getActiveChatId',
         getMessagesByChats: 'getMessagesByChats',
-        nextPage: 'getNextPageNumber',
         isMessagesLoadingNow: 'isMessagesLoadingNow',
+        getChatsPagination: 'getChatsPagination',
+      }),
+      nextPage() {
+
+        let pagination = this.getChatsPagination['chat' + this.getActiveChatId];
+
+        if(pagination)
+          return pagination.next_page;
+
+        return null;
+      },
+      previousPage() {
+        let pagination = this.getChatsPagination['chat' + this.getActiveChatId];
+
+        if(pagination)
+          return pagination.previous_page;
+
+        return null;
+      },
+      alreadyLoadedPages() {
+        let pagination = this.getChatsPagination['chat' + this.getActiveChatId];
+
+        if(pagination)
+          return pagination.pages_already_loaded;
+
+        return null;
+      },
+      ...mapGetters('search', {
+        messageFoundId: "getMessageIdFoundByActiveChat",
       }),
       getMessages() {
         return this.getMessagesByChats['chat' + this.getActiveChatId];
@@ -39,7 +67,7 @@
       }
     },
     watch: {
-      getActiveChatId(newValue, oldValue) {
+      getActiveChatId() {
         this.refreshMessagesByActiveChat();
       },
     },
@@ -54,17 +82,30 @@
         if(maximumHeightForCurrentContent !== 0)
           scrollPercentage = 100 - Math.round((ref.scrollTop * 100) / maximumHeightForCurrentContent);
 
-        if(scrollPercentage > 60
-          && this.nextPage
-          && !this.isMessagesLoadingNow) {
+        let activeChatId = this.getActiveChatId;
 
-          let activeChatId = this.getActiveChatId;
+        if(scrollPercentage > 70
+          && this.nextPage
+          && !this.alreadyLoadedPages['page' + this.nextPage]
+          && !this.isMessagesLoadingNow) {
 
           this.$store.dispatch('chat/loadChatMessages', {
             chat_id: activeChatId,
             per_page: 20,
             page: this.nextPage,
-          })
+            append_to_start: false,
+          });
+        } else if(scrollPercentage < 30
+          && this.previousPage
+          && !this.alreadyLoadedPages['page' + this.previousPage]
+          && !this.isMessagesLoadingNow) {
+
+          this.$store.dispatch('chat/loadChatMessages', {
+            chat_id: activeChatId,
+            per_page: 20,
+            page: this.previousPage,
+            append_to_start: true,
+          });
         }
       },
       refreshMessagesByActiveChat() {
@@ -75,12 +116,18 @@
 
           if (!this.getMessagesByChats['chat' + activeChatId]) {
 
+            let params = {
+              chat_id: activeChatId,
+              per_page: 20,
+            };
+
+            if(this.messageFoundId)
+              params.message_id = this.messageFoundId;
+            else
+              params.page = 1;
+
             this.$store
-              .dispatch('chat/loadChatMessages', {
-                chat_id: activeChatId,
-                per_page: 20,
-                page: 1,
-              });
+              .dispatch('chat/loadChatMessages', params);
           }
         }
       }

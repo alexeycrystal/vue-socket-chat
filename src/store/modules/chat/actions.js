@@ -49,15 +49,21 @@ const actions = {
   },
   loadChatMessages: async (context, payload) => {
 
-    let queryParams = {
-      chat_id: payload.chat_id,
-      per_page: payload.per_page,
-      page: payload.page,
-    };
-
     context.commit("setMessagesLoadingStatus", true);
 
-    let result = await axios.get('/user/messages', {params: queryParams})
+    let appendMessagesToStart = payload.append_to_start;
+
+    let params = {
+      chat_id: payload.chat_id,
+      per_page: payload.per_page,
+    };
+
+    if(payload.page)
+      params.page = payload.page;
+    else if(payload.message_id)
+      params.message_id = payload.message_id;
+
+      let result = await axios.get('/user/messages', {params: params})
       .then(response => {
 
         let data = response.data.data;
@@ -68,31 +74,39 @@ const actions = {
           messages: messages,
         };
 
-        if(payload.page === 1)
+        if(appendMessagesToStart !== undefined)
+          params.append_to_start = appendMessagesToStart;
+
+        if(appendMessagesToStart === undefined) {
           context.commit('createMessages', params);
-        else
+        } else {
           context.commit('appendMessages', params);
+        }
 
         let links = response.data.links;
 
-        console.log(links);
-
         let page = payload.page;
+        if(!page && links.page) {
+          let urlParams = new URLSearchParams(links.page);
+          page = urlParams.get('page');
+        }
+
         let previous_page = null;
-        if(links.previous_page) {
-          const urlParams = new URLSearchParams(links.previous_page);
+        if(links.prev_page) {
+          let urlParams = new URLSearchParams(links.prev_page);
           previous_page = urlParams.get('page');
         }
 
         let next_page = null;
         if(links.next_page) {
-          const urlParams = new URLSearchParams(links.next_page);
+          let urlParams = new URLSearchParams(links.next_page);
           next_page = urlParams.get('page');
         }
 
         let total_pages = links.total_pages;
 
         let paginationParams = {
+          chat_id: payload.chat_id,
           previous_page,
           page,
           next_page,
@@ -159,6 +173,9 @@ const actions = {
     };
 
     context.commit('updateChatUserStatus', params);
+  },
+  resetPaginationState: (context, payload) => {
+    context.commit("resetPaginationState");
   }
 };
 

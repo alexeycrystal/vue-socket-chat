@@ -1,13 +1,46 @@
 <template>
   <div id="search">
     <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-    <input type="text" placeholder="Search..." />
+    <input type="text" placeholder="Search..." v-model="search_value"/>
   </div>
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+  import throttle from "../../../../util/throttle";
+
     export default {
-        name: "SearchBlock"
+        name: "SearchBlock",
+      computed: {
+        ...mapGetters('search', {
+          search_filter: "getSearchFilter",
+        }),
+
+        search_value: {
+          set(search_value) {
+
+            this.$store.dispatch("search/setSearchFilter", search_value);
+
+            if(search_value) {
+
+              throttle(this.$store.dispatch("search/loadChatsBySearchFilter", {
+                per_page: 10,
+                page: 1,
+                filter: search_value,
+              }), 500)
+            }
+
+          },
+          get() {
+            return this.search_filter;
+          }
+        },
+      },
+      methods: {
+          searchUsersAndChatsByFilter() {
+
+          }
+      }
     }
 </script>
 

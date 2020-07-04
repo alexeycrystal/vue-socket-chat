@@ -7,6 +7,7 @@
 </template>
 
 <script>
+
   import {mapGetters} from 'vuex';
 
   import SidePanelBlock from "./sidePanel/SidePanelBlock";
@@ -86,25 +87,38 @@
               vm.$store.dispatch("websocket/setUserStatus", 'online');
           })
           .listen('.ChatMessageSent', function (e) {
+
             console.log(e);
 
-            if(e.data && e.data.message) {
+            if(e.data
+              && e.data.message
+              && e.data.message.chat_id) {
 
               let message = e.data.message;
 
-              vm.$store.dispatch("chat/storeMessage", {
-                message: message,
-                chat_id: message.chat_id,
-              })
+              if(vm.getChats
+                && !vm.getChats['chat' + message.chat_id]) {
 
-              vm.$store.dispatch("chat/updateLastMessageByChat", {
-                message: message.text,
-                chat_id: message.chat_id,
-              });
+                vm.$store.dispatch("chat/getAndRefreshChat", {chat_id: message.chat_id});
+              } else {
+
+                vm.$store.dispatch("chat/storeMessage", {
+                  message: message,
+                  chat_id: message.chat_id,
+                })
+
+                vm.$store.dispatch("chat/updateLastMessageByChat", {
+                  message: message.text,
+                  chat_id: message.chat_id,
+                });
+
+              }
+
+              vm.dispatchAudioNotification();
+
             }
           })
           .listen('.UserStatusChangedEvent', function (e) {
-            console.log('UserStatusChangedEvent!!!!!!!!!!!! FIREEEED!');
 
             if(e.data && e.data.user_id) {
 
@@ -139,6 +153,14 @@
 
           this.$store.dispatch("websocket/setUserStatus", 'offline');
         }
+      },
+      dispatchAudioNotification() {
+
+        let entry = "./dist/audio/tone.mp3";
+
+        let player = new Audio(entry);
+
+        player.play();
       }
     }
   }

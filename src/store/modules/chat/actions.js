@@ -203,11 +203,37 @@ const actions = {
 
           context.commit("appendChat", newChatToAppend);
           context.commit("appendNewUser", {user_id: chat.user_id, status: chat.status});
-          //context.dispatch("websocket/saveUsersAsWSListeners", {chat_ids: [chatId]}, { root: true });
           context.commit('setActiveChatId', chatId);
         }
       }).catch(error => {
+        return Promise.reject(error);
+      });
+  },
+  getAndRefreshChat: async (context, payload) => {
+
+    await axios.get('/user/chats/' + payload.chat_id)
+      .then((response) => {
+
+        if(response.data.data.chat) {
+
+          let chat = response.data.data.chat;
+
+          let newChatToAppend = {
+            avatar: chat.avatar,
+            chat_id: chat.chat_id,
+            last_message: chat.last_message,
+            status: chat.status,
+            title: chat.title,
+            user_id: chat.user_id,
+          };
+
+          context.commit("appendChat", newChatToAppend);
+          context.commit("appendNewUser", {user_id: chat.user_id, status: chat.status});
+        }
+
+      }).catch((error) => {
       return Promise.reject(error);
+
     });
   }
 };

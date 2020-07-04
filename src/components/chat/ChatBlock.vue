@@ -43,20 +43,19 @@
 
         let chats = this.$store.getters["chat/getChats"];
 
-        let chatIds = [];
+        if(Object.keys(chats).length !== 0) {
 
-        console.log(chats);
+          let chatIds = [];
 
-        for (var chat in chats)
-          chatIds.push(chats[chat].chat_id)
+          for (var chat in chats)
+            chatIds.push(chats[chat].chat_id)
 
-        console.log(chatIds);
+          let params = {
+            chats_ids: chatIds,
+          };
 
-        let params = {
-          chats_ids: chatIds,
-        };
-
-        this.$store.dispatch('websocket/saveUsersAsWSListeners', params);
+          this.$store.dispatch('websocket/saveUsersAsWSListeners', params);
+        }
       }
     },
     methods: {

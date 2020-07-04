@@ -17,16 +17,7 @@ const state = {
    */
   isMessagesLoadingNow: false,
   messages: {},
-  messagesPagination: {
-    /*
-    per_page: 20,
-    previous_page: null,
-    page: 1,
-    next_page: null,
-    total_pages: null,
-    pages_already_loaded: {},
-     */
-  },
+  messagesPagination: {},
   lastLoadedMessagesByChatId: false,
 };
 

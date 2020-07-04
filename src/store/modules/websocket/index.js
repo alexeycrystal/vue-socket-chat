@@ -24,13 +24,8 @@ const actions = {
       chats_ids: payload.chats_ids,
     };
 
-    let result = await axios.post('/user/ws/dependencies', params)
-      .then((response) => {
-
-        if (response.data.data)
-          console.log('Dependencies was saved!');
-
-      }).catch(error => {
+    await axios.post('/user/ws/dependencies', params)
+      .catch(error => {
         return Promise.reject(error);
       });
   },
@@ -66,13 +61,8 @@ const actions = {
       status: status,
     };
 
-    let result = await axios.post('/profile/status/change', params)
-      .then((response) => {
-
-        if (response.data.data && response.data.data.result)
-          console.log('Status was changed!');
-
-      }).catch(error => {
+    await axios.post('/profile/status/change', params)
+      .catch(error => {
         return Promise.reject(error);
       });
   },

@@ -176,6 +176,39 @@ const actions = {
   },
   resetPaginationState: (context, payload) => {
     context.commit("resetPaginationState");
+  },
+  createChatIfNotExists: async (context, payload) => {
+
+    let params = {
+      users_ids: [payload.user_id],
+    }
+
+    await axios.post('/user/chats', params)
+      .then((response) => {
+
+        let chatId = response.data.data.chat_id;
+
+        if (chatId) {
+
+          let chat = response.data.data.chat;
+
+          let newChatToAppend = {
+            avatar: chat.avatar,
+            chat_id: chatId,
+            last_message: chat.last_message,
+            status: chat.status,
+            title: chat.title,
+            user_id: chat.user_id,
+          }
+
+          context.commit("appendChat", newChatToAppend);
+          context.commit("appendNewUser", {user_id: chat.user_id, status: chat.status});
+          //context.dispatch("websocket/saveUsersAsWSListeners", {chat_ids: [chatId]}, { root: true });
+          context.commit('setActiveChatId', chatId);
+        }
+      }).catch(error => {
+      return Promise.reject(error);
+    });
   }
 };
 

@@ -10,7 +10,8 @@
       <ul v-show="searchFilter === ''">
         <li v-for="contact in contacts"
             class="chat"
-            :key="contact.user_id">
+            :key="contact.user_id"
+            @click="createChatByUser(contact.user_id)">
           <div class="wrap">
             <span class="chat-status"></span>
             <img :src="contact.avatar" alt=""/>
@@ -24,7 +25,8 @@
       <ul v-show="searchFilter !== ''">
         <li v-for="contact in contactsByFilter"
             class="chat"
-            :key="contact.user_id">
+            :key="contact.user_id"
+            @click="createChatByUser(contact.user_id)">
           <div class="wrap">
             <span class="chat-status"></span>
             <img :src="contact.avatar" alt=""/>
@@ -46,10 +48,14 @@
   export default {
     name: "SearchContacts",
     created() {
-
-      this.$store.dispatch("contact/loadLoggedUserContacts", {per_page: 10, page: 1, is_search: false});
+      this.$store
+        .dispatch("contact/loadLoggedUserContacts", {per_page: 10, page: 1, is_search: false});
     },
     computed: {
+      ...mapGetters('chat', {
+        isChatCreated: "isChatCreated",
+        activeChatId: "getActiveChatId"
+      }),
       ...mapGetters('contact', {
         contacts: "getCurrentContacts",
         contactsByFilter: "getFoundContacts",
@@ -63,24 +69,25 @@
       };
     },
     watch: {
-      searchFilter: _.debounce(function (){
+      searchFilter: _.debounce(function () {
         this.isTyping = false;
       }, 600),
       isTyping() {
 
-        if(this.searchFilter === '') {
-          console.log('cleating state');
+        if (this.searchFilter === '')
           this.$store.dispatch("contact/resetFoundContacts");
-        }
 
-        if(!this.isTyping)
+        if (!this.isTyping)
           this.uploadContacts();
       },
+      activeChatId() {
+         this.$emit('close');
+      }
     },
     methods: {
       uploadContacts() {
 
-        if(this.searchFilter !== '') {
+        if (this.searchFilter !== '') {
 
           this.$store.dispatch("contact/loadLoggedUserContacts", {
             per_page: 10,
@@ -88,6 +95,13 @@
             filter: this.searchFilter,
           });
         }
+      },
+      createChatByUser(userId) {
+        //this.$emit('close');
+
+        this.$store.dispatch("chat/createChatIfNotExists", {
+          user_id: userId
+        })
       }
     }
   }

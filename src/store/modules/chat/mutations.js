@@ -1,24 +1,14 @@
 import Vue from 'vue';
 
 const mutations = {
-  appendChats: (state, payload) => {
-
-    let chats = state.chats
-
-    payload.forEach(chat => {
-      chats[chat.chat_id] = chat;
-    })
-
-    state.chats = chats;
+  appendChat: (state, payload) => {
+    Vue.set(state.chats, 'chat' + payload.chat_id, payload);
   },
   setChats: (state, payload) => {
     state.chats = payload;
   },
   setActiveChatId: (state, payload) => {
     state.activeChatId = payload;
-  },
-  setLastLoadedMessagesByChatId: (state, payload) => {
-    state.lastLoadedMessagesByChatId = payload;
   },
   createMessages: (state, payload) => {
 
@@ -104,13 +94,6 @@ const mutations = {
       Vue.set(state.messagesPagination[property].pages_already_loaded, 'page' + page, payload.page);
     }
   },
-  addPageToAlreadyLoaded: (state, payload) => {
-
-    if (!state.messagesPagination['chat' + payload.chat_id])
-      state.messagesPagination['chat' + payload.chat_id] = {};
-
-    Vue.set(state.messagesPagination['chat' + payload.chat_id], 'pages_already_loaded', payload.page);
-  },
   resetPaginationState: (state, page) => {
     state.messagesPagination = {
       per_page: 20,
@@ -120,7 +103,17 @@ const mutations = {
       total_pages: null,
       pages_already_loaded: {},
     };
+  },
+  appendNewUser: (state, payload) => {
+
+    let key = 'user' + payload.user_id;
+
+    if(!state.users[key])
+      state.users[key] = {};
+
+    state.users[key].status = payload.status;
   }
+
 };
 
 export default mutations;

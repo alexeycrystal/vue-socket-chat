@@ -13,6 +13,8 @@ import production from './config/production.json'
 import veevalidate from './util/veevalidate'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 
+import VModal from 'vue-js-modal'
+
 //import 'font-awesome/scss/font-awesome.scss';
 //import 'reset-css/sass/_reset.scss'
 
@@ -27,7 +29,9 @@ axios.defaults.baseURL = config.apiUrl;
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
-
+Vue.use(VModal, {
+  dynamic: true,
+});
 
 new Vue({
   el: '#app',

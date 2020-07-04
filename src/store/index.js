@@ -8,6 +8,7 @@ import chat from './modules/chat';
 import user from './modules/user';
 import websocket from './modules/websocket';
 import search from "./modules/search";
+import contact from "./modules/contact";
 
 Vue.use(Vuex);
 
@@ -22,5 +23,6 @@ export const store = new Vuex.Store({
     user,
     websocket,
     search,
+    contact,
   }
 });

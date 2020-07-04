@@ -2,6 +2,7 @@
   <div id="frame">
     <SidePanelBlock></SidePanelBlock>
     <ContentBlock></ContentBlock>
+    <modals-container />
   </div>
 </template>
 

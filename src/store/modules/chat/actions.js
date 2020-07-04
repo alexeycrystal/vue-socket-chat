@@ -13,16 +13,16 @@ const actions = {
 
         let chats = response.data.data;
 
-        if(chats) {
+        if (chats) {
 
           let users = {};
           let chatsResult = {};
 
-          chats.forEach(function(element, $index) {
+          chats.forEach(function (element, $index) {
 
             chatsResult['chat' + element.chat_id] = element;
 
-            if(element.user_id) {
+            if (element.user_id) {
 
               let prefix = 'user' + element.user_id;
               users[prefix] = {};
@@ -58,12 +58,12 @@ const actions = {
       per_page: payload.per_page,
     };
 
-    if(payload.page)
+    if (payload.page)
       params.page = payload.page;
-    else if(payload.message_id)
+    else if (payload.message_id)
       params.message_id = payload.message_id;
 
-      let result = await axios.get('/user/messages', {params: params})
+    let result = await axios.get('/user/messages', {params: params})
       .then(response => {
 
         let data = response.data.data;
@@ -74,10 +74,10 @@ const actions = {
           messages: messages,
         };
 
-        if(appendMessagesToStart !== undefined)
+        if (appendMessagesToStart !== undefined)
           params.append_to_start = appendMessagesToStart;
 
-        if(appendMessagesToStart === undefined) {
+        if (appendMessagesToStart === undefined) {
           context.commit('createMessages', params);
         } else {
           context.commit('appendMessages', params);
@@ -86,19 +86,19 @@ const actions = {
         let links = response.data.links;
 
         let page = payload.page;
-        if(!page && links.page) {
+        if (!page && links.page) {
           let urlParams = new URLSearchParams(links.page);
           page = urlParams.get('page');
         }
 
         let previous_page = null;
-        if(links.prev_page) {
+        if (links.prev_page) {
           let urlParams = new URLSearchParams(links.prev_page);
           previous_page = urlParams.get('page');
         }
 
         let next_page = null;
-        if(links.next_page) {
+        if (links.next_page) {
           let urlParams = new URLSearchParams(links.next_page);
           next_page = urlParams.get('page');
         }
@@ -136,7 +136,7 @@ const actions = {
 
         let result = response.data.data.result;
 
-        if(result && response.data.data.message) {
+        if (result && response.data.data.message) {
 
           context.commit('addNewMessage', {
             chat_id: payload.chat_id,
@@ -149,7 +149,7 @@ const actions = {
           });
         }
       }).catch(error => {
-        return Promise.reject(error);
+      return Promise.reject(error);
     });
   },
   updateLastMessageByChat: async (context, payload) => {

@@ -1,6 +1,6 @@
 <template>
-  <div class="messages" @scroll="processMessageScroll" ref="messagesBlock">
-    <ul class="reverseorder">
+  <div class="messages" @scroll="processMessageScroll">
+    <ul class="reverseorder" ref="messagesBlock">
       <li v-for="(message, index) in getMessages"
           :class="currentUserId === message.user_id
           ? 'sent'
@@ -55,7 +55,7 @@
         messageFoundId: "getMessageIdFoundByActiveChat",
       }),
       getMessages() {
-        return this.getMessagesByChats['chat' + this.getActiveChatId];
+          return this.getMessagesByChats['chat' + this.getActiveChatId];
       }
     },
     created() {
@@ -72,6 +72,9 @@
       },
     },
     methods: {
+      scrollToCenter() {
+        this.$refs.messagesBlock.scrollIntoView();
+      },
       processMessageScroll(event) {
 
         let ref = event.target;
@@ -94,6 +97,7 @@
             per_page: 20,
             page: this.nextPage,
             append_to_start: false,
+            element: this.$refs.messagesBlock,
           });
         } else if(scrollPercentage < 30
           && this.previousPage
@@ -105,6 +109,7 @@
             per_page: 20,
             page: this.previousPage,
             append_to_start: true,
+            element: this.$refs.messagesBlock,
           });
         }
       },

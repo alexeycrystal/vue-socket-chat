@@ -38,6 +38,9 @@ const actions = {
       return Promise.reject(error);
     });
   },
+  resetFoundContacts: (context) => {
+    context.commit("setFoundContacts", []);
+  }
 }
 
 export default actions;

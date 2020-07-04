@@ -65,8 +65,13 @@
     watch: {
       searchFilter: _.debounce(function (){
         this.isTyping = false;
-      }, 1000),
+      }, 600),
       isTyping() {
+
+        if(this.searchFilter === '') {
+          console.log('cleating state');
+          this.$store.dispatch("contact/resetFoundContacts");
+        }
 
         if(!this.isTyping)
           this.uploadContacts();

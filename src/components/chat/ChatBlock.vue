@@ -22,10 +22,15 @@
     created() {
       this.listenToOwnPresenceChannel();
 
-      window.addEventListener('beforeunload', this.releaseListenersAfterClose)
+      window.addEventListener('beforeunload', this.releaseListenersAfterClose);
+      window.addEventListener('visibilitychange', this.handleVisibilityChanges)
     },
     beforeDestroy() {
       this.leaveOwnChannel();
+
+      window.removeEventListener('beforeunload', this.releaseListenersAfterClose);
+      window.removeEventListener('visibilitychange', this.handleVisibilityChanges)
+
     },
     computed: {
       ...mapGetters('auth', [
@@ -38,6 +43,11 @@
       ...mapGetters('websocket', [
         "getUsersInChannel"
       ])
+    },
+    data() {
+      return {
+        isWindowActive: true,
+      }
     },
     watch: {
       getChats() {
@@ -70,6 +80,9 @@
           token,
           status: 'offline'
         });
+      },
+      handleVisibilityChanges(event) {
+        this.isWindowActive = document.visibilityState === 'visible';
       },
       listenToOwnPresenceChannel() {
 
@@ -114,8 +127,10 @@
 
               }
 
-              vm.dispatchAudioNotification();
+              console.log('WINDOW STATUS: ' + vm.isWindowActive);
 
+              if(!vm.isWindowActive)
+                vm.dispatchAudioNotification();
             }
           })
           .listen('.UserStatusChangedEvent', function (e) {
@@ -129,10 +144,6 @@
 
               vm.$store.dispatch("chat/updateChatUserStatus", params)
             }
-          })
-          .joining((user) => {
-
-            console.log('joining channel - user');
           })
           .leaving((user) => {
 

@@ -25,7 +25,7 @@
 </script>
 
 <style scoped>
-  #frame #sidepanel {
+  #sidepanel {
     float: left;
     min-width: 280px;
     max-width: 340px;

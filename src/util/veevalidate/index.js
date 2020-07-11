@@ -1,5 +1,13 @@
 import {extend} from 'vee-validate';
-import {required, email, min, max, alpha_num, confirmed} from 'vee-validate/dist/rules';
+import {
+  required,
+  email,
+  min,
+  max,
+  alpha_num,
+  confirmed,
+  image
+} from 'vee-validate/dist/rules';
 
 // Add the required rule
 extend('required', {
@@ -24,6 +32,10 @@ extend('alpha_num', {
 
 extend('confirmed', {
   ...confirmed
+});
+
+extend('image', {
+  ...image
 });
 
 export default true;

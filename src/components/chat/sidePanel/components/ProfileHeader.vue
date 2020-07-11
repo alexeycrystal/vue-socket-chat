@@ -1,7 +1,11 @@
 <template>
   <div id="profile">
     <div class="wrap">
-      <img id="profile-img" :src="userDetail.avatar" class="online" alt=""/>
+      <img id="profile-img"
+           :src="userDetail.avatar"
+           class="online"
+           alt=""
+           @click="openPhotoFileUploadModal"/>
       <p>{{userDetail.name}}</p>
       <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
       <div id="status-options">
@@ -29,7 +33,7 @@
 </template>
 
 <script>
-
+  import ProfilePhotoChange from "./profile/ProfilePhotoChange";
   import {mapGetters} from 'vuex';
 
   export default {
@@ -44,6 +48,14 @@
         accountLoaded: 'isAccountLoaded',
         userDetail: 'getAccountDetails',
       })
+    },
+    methods: {
+      openPhotoFileUploadModal() {
+        this.$modal.show(ProfilePhotoChange, {}, {
+          name: 'search-contacts-modal',
+          root: this.$root
+        })
+      }
     }
   }
 </script>

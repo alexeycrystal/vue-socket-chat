@@ -36,6 +36,7 @@
     overflow: hidden;
     position: relative;
   }
+
   @media screen and (max-width: 735px) {
     #frame #sidepanel {
       width: 58px;

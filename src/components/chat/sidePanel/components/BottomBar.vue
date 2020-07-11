@@ -1,16 +1,47 @@
 <template>
-  <div id="bottom-bar">
-    <button id="addchat" @click="openUsersSearchModal"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add chat</span>
-    </button>
-    <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+  <div>
+    <div id="bottom-bar">
+      <button id="addchat"
+              @click="openUsersSearchModal">
+        <i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>
+        <span>Add chat</span>
+      </button>
+      <button id="settings"
+              @click="showSettingsPanel">
+        <i class="fa fa-cog fa-fw"
+           aria-hidden="true"
+           ></i>
+        <span>Settings</span>
+      </button>
+    </div>
+    <div id="settings-panel"
+         class="settings-side-panel"
+         v-click-outside="closeSettings"
+         :style="{width: settingsToggled ? '100%' : '0px'}">
+      <button class="settings-button">About</button>
+      <button class="settings-button">Services</button>
+      <button class="settings-button">Clients</button>
+      <button class="settings-button">Logout</button>
+    </div>
   </div>
+
 </template>
 
 <script>
+  import clickOutside from "../../../../directives/clickOutside";
   import SearchContacts from "./botton/SearchContacts";
 
   export default {
     name: "BottomBar",
+    directives: {
+      clickOutside
+    },
+    data() {
+      return {
+        settingsToggled: false,
+        settingsInitialClick: false,
+      }
+    },
     methods: {
       openUsersSearchModal() {
         this.$modal.show(SearchContacts, {
@@ -19,6 +50,17 @@
           name: 'search-contacts-modal',
           root: this.$root
         })
+      },
+      showSettingsPanel() {
+        this.settingsToggled = true;
+        this.settingsInitialClick = true;
+      },
+      closeSettings() {
+        if(!this.settingsInitialClick)
+          this.settingsToggled = false;
+
+        this.settingsInitialClick = false;
+        console.log('CLICK OUTSIDE ' + this.settingsToggled);
       }
     }
   }
@@ -85,5 +127,29 @@
     #frame #sidepanel #bottom-bar button span {
       display: none;
     }
+  }
+
+  .settings-side-panel  {
+    width: 0;
+    float: left;
+    position: absolute;
+    max-width: 340px;
+    z-index: 1;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #2c3e50;
+    overflow-x: hidden;
+    transition: 0.2s;
+    padding-top: 60px;
+  }
+
+  .settings-side-panel .settings-button {
+    margin: 8px 8px 8px 32px;
+    padding: 8px 8px 8px 32px;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
   }
 </style>

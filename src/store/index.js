@@ -9,20 +9,33 @@ import user from './modules/user';
 import websocket from './modules/websocket';
 import search from "./modules/search";
 import contact from "./modules/contact";
+import settings from "./modules/settings";
+
+import _ from 'lodash';
 
 Vue.use(Vuex);
+
+const modules = {
+  auth,
+  chat,
+  user,
+  websocket,
+  search,
+  contact,
+  settings,
+};
 
 export const store = new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: ['auth'],
     })],
-  modules: {
-    auth,
-    chat,
-    user,
-    websocket,
-    search,
-    contact,
-  }
+  mutations: {
+    resetState(state) {
+      _.forOwn(modules, (value, key) => {
+        state[key] = _.cloneDeep(value.state);
+      });
+    },
+  },
+  modules: _.cloneDeep(modules),
 });

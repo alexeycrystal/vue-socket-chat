@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from "../../../router";
 
 const state = {
   auth: {
@@ -33,7 +34,7 @@ const actions = {
       password: payload.password,
     };
 
-    let result = await axios.post('/auth/login', params)
+    await axios.post('/auth/login', params)
       .then(response => {
 
         let data = response.data.data;
@@ -48,9 +49,7 @@ const actions = {
       }).catch(error => {
         return Promise.reject(error);
       });
-
-    return result;
-  },
+    },
   register: async (context, payload) => {
     let params = {
       email: payload.email,
@@ -60,7 +59,7 @@ const actions = {
       lang: payload.lang,
     };
 
-    let result = await axios.post('/auth/registration', params)
+    await axios.post('/auth/registration', params)
       .then(response => {
 
         let data = response.data.data;
@@ -73,11 +72,15 @@ const actions = {
       }).catch(error => {
         return Promise.reject(error);
       });
-
-    return result;
   },
   setToken: (context, payload) => {
     context.commit('setToken', payload);
+  },
+  logout({commit}, payload) {
+    commit('setToken', null);
+    commit('setLoggedUserId', null);
+    router.push('/login');
+    commit("resetState", null, { root: true });
   }
 };
 

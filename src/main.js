@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 
 import {store} from './store'
-import {router} from './router'
+import router from './router'
 import axios from './util/axios'
 
 import echo from './util/echo'

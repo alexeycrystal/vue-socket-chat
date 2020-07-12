@@ -6,10 +6,10 @@ const clickOutside = {
         event.stopPropagation();
       }
     }
-    document.addEventListener('click', el.__vueClickOutside__);
+    document.body.addEventListener('click', el.__vueClickOutside__);
   },
   unbind: function (el, binding, vNode) {
-    document.removeEventListener('click', el.__vueClickOutside__);
+    document.body.removeEventListener('click', el.__vueClickOutside__);
     el.__vueClickOutside__ = null;
   }
 }

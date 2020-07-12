@@ -127,8 +127,6 @@
 
               }
 
-              console.log('WINDOW STATUS: ' + vm.isWindowActive);
-
               if(!vm.isWindowActive)
                 vm.dispatchAudioNotification();
             }
@@ -158,7 +156,8 @@
       },
       leaveOwnChannel() {
 
-        this.$echo.leave('chat.user.' + this.getLoggedUserId);
+        this.$echo
+          .leave('chat.user.' + this.getLoggedUserId);
 
         if(this.getUsersInChannel.length > 0) {
 

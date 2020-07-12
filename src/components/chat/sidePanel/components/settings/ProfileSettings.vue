@@ -15,7 +15,8 @@
     name: "ProfileSettings",
     computed: {
       ...mapGetters("auth", {
-        token: "getToken"
+        token: "getToken",
+        loggedUserId: "getLoggedUserId",
       }),
       ...mapGetters('settings', {
         settingsToggled: "isSettingsToggled",
@@ -35,6 +36,8 @@
       logout() {
 
         let token = this.token;
+
+        this.$echo.leave('chat.user.' + this.loggedUserId);
 
         this.$store.dispatch("websocket/deleteUserListeners", {
           token

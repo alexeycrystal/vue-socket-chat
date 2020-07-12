@@ -9,8 +9,7 @@
       <button id="settings"
               @click="showSettingsPanel">
         <i class="fa fa-cog fa-fw"
-           aria-hidden="true"
-           ></i>
+           aria-hidden="true"></i>
         <span>Settings</span>
       </button>
     </div>

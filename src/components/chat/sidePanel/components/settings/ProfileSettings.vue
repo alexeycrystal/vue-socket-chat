@@ -14,6 +14,9 @@
   export default {
     name: "ProfileSettings",
     computed: {
+      ...mapGetters("auth", {
+        token: "getToken"
+      }),
       ...mapGetters('settings', {
         settingsToggled: "isSettingsToggled",
         settingsInitialClick: "isSettingsInitialClick"
@@ -30,6 +33,16 @@
         this.$store.dispatch("settings/setSettingsInitialClick", false);
       },
       logout() {
+
+        let token = this.token;
+
+        this.$store.dispatch("websocket/deleteUserListeners", {
+          token
+        });
+        this.$store.dispatch("websocket/setOfflineStatusByBeacon", {
+          token,
+          status: 'offline'
+        });
         this.$store.dispatch("auth/logout");
       }
     }
